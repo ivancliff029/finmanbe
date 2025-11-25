@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.contrib.auth.models import User
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -20,6 +22,13 @@ class Category(models.Model):
         return sum(item.amount for item in self.items.all())
 
 class Item(models.Model):
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="items_added"
+    )
     name = models.CharField(max_length=200)
     category = models.ForeignKey(
         Category, 
