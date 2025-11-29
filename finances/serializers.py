@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Item
+from .models import Category, Item, Budget
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
@@ -42,6 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
+        fields = ['id', 'name', 'category', 'amount', 'description', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+
+class BudgetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Budget
         fields = ['id', 'name', 'category', 'amount', 'description', 'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
 

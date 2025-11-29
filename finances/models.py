@@ -19,7 +19,8 @@ class Category(models.Model):
 
     @property
     def total_amount(self):
-        return sum(item.amount for item in self.items.all())
+        # Fixed: use 'itemsItem' instead of 'items'
+        return sum(item.amount for item in self.itemsItem.all())
 
 class Item(models.Model):
     user = models.ForeignKey(
@@ -33,7 +34,36 @@ class Item(models.Model):
     category = models.ForeignKey(
         Category, 
         on_delete=models.CASCADE, 
-        related_name='items'
+        related_name='itemsItem'  # This is the related_name
+    )
+    amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} - {self.amount} UGX"
+    
+class Budget(models.Model):
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="budget_added"
+    )
+    name = models.CharField(max_length=200)
+    category = models.ForeignKey(
+        Category, 
+        on_delete=models.CASCADE, 
+        related_name='itemsBudget'
     )
     amount = models.DecimalField(
         max_digits=15, 

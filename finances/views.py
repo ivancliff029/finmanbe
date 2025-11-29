@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status
 from django.db.models import Sum
-from .models import Category, Item
+from .models import Category, Item, Budget
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
@@ -10,7 +10,8 @@ from .serializers import UserRegistrationSerializer, UserSerializer
 from .serializers import (
     CategorySerializer, 
     CategoryListSerializer, 
-    ItemSerializer
+    ItemSerializer,
+    BudgetSerializer
 )
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -33,6 +34,22 @@ class ItemViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = Item.objects.all()
+        category_id = self.request.query_params.get('category', None)
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+        return queryset
+    
+    def perform_create(self, serializer):
+        """Automatically attach the logged-in user to new items"""
+        serializer.save(user=self.request.user)
+
+class BudgetViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Budget.objects.all()
+    serializer_class = BudgetSerializer
+    
+    def get_queryset(self):
+        queryset = Budget.objects.all()
         category_id = self.request.query_params.get('category', None)
         if category_id:
             queryset = queryset.filter(category_id=category_id)

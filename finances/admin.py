@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Item
+from .models import Category, Item, Budget
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -11,11 +11,19 @@ class CategoryAdmin(admin.ModelAdmin):
     get_total_amount.short_description = 'Total Amount'
     
     def get_items_count(self, obj):
-        return obj.items.count()
+        # Fixed: use 'itemsItem' instead of 'items'
+        return obj.itemsItem.count()
     get_items_count.short_description = 'Items Count'
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'amount', 'created_at']
+    list_filter = ['category', 'created_at']
+    search_fields = ['name', 'description']
+    date_hierarchy = 'created_at'
+
+@admin.register(Budget)
+class BudgetAdmin(admin.ModelAdmin):
     list_display = ['name', 'category', 'amount', 'created_at']
     list_filter = ['category', 'created_at']
     search_fields = ['name', 'description']
