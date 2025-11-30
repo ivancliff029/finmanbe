@@ -3,6 +3,7 @@ from .models import Category, Item, Budget
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, 
@@ -34,37 +35,27 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
         return user
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email')
 
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = ['id', 'name', 'category', 'amount', 'description', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
-
-class BudgetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Budget
-        fields = ['id', 'name', 'category', 'amount', 'description', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
 
 class CategorySerializer(serializers.ModelSerializer):
-    items = ItemSerializer(many=True, read_only=True)
     total_amount = serializers.DecimalField(
         max_digits=15, 
         decimal_places=2, 
         read_only=True
     )
-    items_count = serializers.IntegerField(source='items.count', read_only=True)
+    items_count = serializers.IntegerField(source='itemsItem.count', read_only=True)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'items', 'total_amount', 
+        fields = ['id', 'name', 'description', 'total_amount', 
                   'items_count', 'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
+
 
 class CategoryListSerializer(serializers.ModelSerializer):
     total_amount = serializers.DecimalField(
@@ -72,8 +63,49 @@ class CategoryListSerializer(serializers.ModelSerializer):
         decimal_places=2, 
         read_only=True
     )
-    items_count = serializers.IntegerField(source='items.count', read_only=True)
+    items_count = serializers.IntegerField(source='itemsItem.count', read_only=True)
 
     class Meta:
         model = Category
         fields = ['id', 'name', 'description', 'total_amount', 'items_count']
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Item
+        fields = ['id', 'name', 'category', 'category_name', 'amount', 
+                  'description', 'user', 'user_name', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
+
+
+class BudgetSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Budget
+        fields = ['id', 'name', 'category', 'category_name', 'amount', 
+                  'description', 'user', 'user_name', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
+
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    """Detailed category view with all items"""
+    items = ItemSerializer(many=True, read_only=True, source='itemsItem')
+    budgets = BudgetSerializer(many=True, read_only=True, source='itemsBudget')
+    total_amount = serializers.DecimalField(
+        max_digits=15, 
+        decimal_places=2, 
+        read_only=True
+    )
+    items_count = serializers.IntegerField(source='itemsItem.count', read_only=True)
+    budgets_count = serializers.IntegerField(source='itemsBudget.count', read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'description', 'items', 'budgets', 'total_amount', 
+                  'items_count', 'budgets_count', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']

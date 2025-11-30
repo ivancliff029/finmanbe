@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin Man - Categories</title>
+</head>
+<body>
+    <h1>Categories</h1>
+    
+    <input type="text" id="categoryName" placeholder="Add New Categories...">
+    <button onclick="addCategory()">+ Add</button>
+
+    <ul id="categoryList">
+        {% if categories %}
+            {% for category in categories %}
+                <li>
+                    <strong>ID:</strong> {{ category.id }} <br>
+                    <strong>Name:</strong> {{ category.name }}
+                </li>
+            {% endfor %}
+        {% else %}
+            <p>No categories found.</p>
+        {% endif %}
+    </ul>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        async function addCategory() {
+            const name = document.getElementById('categoryName').value;
+            
+            if (!name) {
+                alert('Please enter a category name');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/categories/', {  // Changed from /api/categories/add/
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ name: name })
+                });
+
+                if (response.ok) {
+                    alert('Category added successfully!');
+                    document.getElementById('categoryName').value = '';  // Clear input
+                    location.reload();  // Reload to show new category
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + JSON.stringify(error));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding category');
+            }
+        }
+    </script>
+</body>
+</html>

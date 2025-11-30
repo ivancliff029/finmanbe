@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import render, redirect
 from .serializers import UserRegistrationSerializer, UserSerializer
 from .serializers import (
     CategorySerializer, 
@@ -14,7 +15,37 @@ from .serializers import (
     BudgetSerializer
 )
 
+def index(request):
+     return render(request, 'index.html')
+def budget_view(request):
+    budget = Budget.objects.all()
+    context = {'budget': budget}
+    return render(request, 'budget.html', context)
+def category_view(request):
+       categories = Category.objects.all()
+       print(f"Categories found: {categories.count()}")  # Add this
+       context = {'categories': categories}
+       return render(request, 'category.html', context)
+def login_view(request):
+    return render(request, 'login.html')
+
+def register_view(request):
+    return render(request, 'register.html')
+
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Or use IsAuthenticated if needed
+def add_category(request):
+    """Add a new category"""
+    name = request.POST.get('name')
+    
+    if name:
+        Category.objects.create(name=name)
+        return redirect('category_view')  # Redirect back to category page
+    
+    return redirect('category_view')
+
 class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Category.objects.all()
     
     def get_serializer_class(self):

@@ -1,12 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CategoryViewSet, ItemViewSet, BudgetViewSet, register_user, login_user, get_user_profile
+from . import views
 from rest_framework_simplejwt.views import TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'items', ItemViewSet, basename='item')
-router.register(r'budget', BudgetViewSet, basename='budget')
+router.register(r'budgets', BudgetViewSet, basename='budget')  # Changed to 'budgets' (plural)
 
 urlpatterns = [
     path('', include(router.urls)),
