@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items List</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .no-data { color: red; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <h1>Items List</h1>
+
+    <!-- Link to go back home -->
+    <a href="/">Back to Home</a>
+
+    <!-- Check if there are items -->
+    {% if items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Amount (UGX)</th>
+                    <th>Date Added</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <!-- We use item.category.name to get the string representation -->
+                    <td>{{ item.category.name }}</td> 
+                    <td>{{ item.amount }}</td>
+                    <td>{{ item.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <!-- This shows if the list is empty -->
+        <p class="no-data">No items found. Please add items via the API or Admin panel.</p>
+    {% endif %}
+
+</body>
+</html>

@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),      # Frontend home page
     path('categories/', views.category_view, name="category"),
     path('budget/', views.budget_view, name="budget"),
+    path('items/', views.item_view, name="item"),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
 ]
