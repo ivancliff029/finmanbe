@@ -24,7 +24,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 @admin.register(Budget)
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'amount', 'created_at']
+    list_display = ['name', 'category', 'amount','type', 'created_at']
     list_filter = ['category', 'created_at']
     search_fields = ['name', 'description']
     date_hierarchy = 'created_at'

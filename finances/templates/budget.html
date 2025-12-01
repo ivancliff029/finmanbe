@@ -5,18 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fin Man - Budgets</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-menu li {
+            margin: 0;
+        }
+
+        .nav-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-weight: normal;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-menu a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .user-info {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info button {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border: 1px solid white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .user-info button:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .main-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
         }
+
         h1 {
             color: #333;
             border-bottom: 3px solid #4CAF50;
             padding-bottom: 10px;
+            margin-bottom: 20px;
         }
+
         .add-section {
             background: white;
             padding: 20px;
@@ -24,6 +124,12 @@
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+
+        .add-section h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
         .add-section input, .add-section select, .add-section textarea {
             width: 100%;
             padding: 10px;
@@ -32,6 +138,7 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+
         .add-section button {
             background-color: #4CAF50;
             color: white;
@@ -42,15 +149,18 @@
             font-size: 16px;
             margin-top: 10px;
         }
+
         .add-section button:hover {
             background-color: #45a049;
         }
+
         .budget-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
+
         .budget-card {
             background: white;
             border-radius: 8px;
@@ -58,22 +168,26 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
+
         .budget-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
+
         .budget-name {
             font-size: 20px;
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
         }
+
         .budget-amount {
             font-size: 24px;
             color: #4CAF50;
             font-weight: bold;
             margin: 10px 0;
         }
+
         .budget-category {
             display: inline-block;
             background-color: #e3f2fd;
@@ -83,11 +197,13 @@
             font-size: 14px;
             margin-bottom: 10px;
         }
+
         .budget-description {
             color: #666;
             margin: 10px 0;
             font-size: 14px;
         }
+
         .budget-meta {
             font-size: 12px;
             color: #999;
@@ -95,11 +211,13 @@
             padding-top: 15px;
             border-top: 1px solid #eee;
         }
+
         .budget-user {
             color: #666;
             font-size: 14px;
             margin-bottom: 10px;
         }
+
         .no-budgets {
             text-align: center;
             padding: 40px;
@@ -108,6 +226,7 @@
             color: #666;
             grid-column: 1 / -1;
         }
+
         .total-summary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -116,16 +235,19 @@
             margin-bottom: 20px;
             text-align: center;
         }
+
         .total-summary h2 {
             margin: 0;
             font-size: 18px;
             font-weight: normal;
         }
+
         .total-summary .amount {
             font-size: 36px;
             font-weight: bold;
             margin-top: 10px;
         }
+
         .delete-btn {
             background-color: #f44336;
             color: white;
@@ -136,106 +258,197 @@
             font-size: 14px;
             margin-top: 10px;
         }
+
         .delete-btn:hover {
             background-color: #da190b;
         }
+
         .loading {
             text-align: center;
             padding: 40px;
             color: #666;
         }
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
-            margin: -20px -20px 20px -20px;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+            .nav-menu.active {
+                max-height: 500px;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .nav-menu a {
+                padding: 15px 20px;
+                border-radius: 0;
+                border: none;
+                background-color: transparent;
+                width: 100%;
+                text-align: left;
+            }
+
+            .nav-menu a:hover {
+                background-color: rgba(255,255,255,0.1);
+            }
+
+            .user-info {
+                width: 100%;
+                padding: 15px 20px;
+                justify-content: space-between;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            /* Hamburger animation */
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .budget-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .total-summary .amount {
+                font-size: 28px;
+            }
         }
-        .navbar h2 {
-            margin: 0;
-            color: white;
-        }
-        .navbar .user-info {
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .navbar button {
-            background-color: rgba(255,255,255,0.2);
-            color: white;
-            padding: 8px 16px;
-            border: 1px solid white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .navbar button:hover {
-            background-color: rgba(255,255,255,0.3);
-        }
-        .debug-info {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-family: monospace;
-            font-size: 12px;
+
+        @media (max-width: 480px) {
+            .nav-logo {
+                font-size: 1.25rem;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            .add-section {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="navb<ar">
-        <h2>Fin Man - Budgets</h2>
-        <div class="user-info">
-            <span id="userName">Guest</span>
-            <button onclick="logout()">Logout</button>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">Fin Man</div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/budget">Budget</a></li>
+                <li><a href="/items">Items</a></li>
+                <li><a href="/categories">Categories</a></li>
+                <li class="user-info">
+                    <span id="userName">Guest</span>
+                    <button onclick="logout()">Logout</button>
+                </li>
+            </ul>
         </div>
-    </div>
-    
-    <h1>Budget Management</h1>
+    </nav>
 
-    <!-- Debug Info -->
-    <div class="debug-info" id="debugInfo">
-        <strong>Debug Info:</strong><br>
-        API Endpoint: <span id="apiEndpoint"></span><br>
-        Token Present: <span id="tokenPresent"></span><br>
-        Response Status: <span id="responseStatus"></span><br>
-        Budgets Count: <span id="budgetsCount"></span><br>
-        Response Type: <span id="responseType"></span>
-    </div>
+    <div class="main-content">
+        <h1>Budget Management</h1>
 
-    <!-- Add Budget Form -->
-    <div class="add-section">
-        <h2>Add New Budget</h2>
-        <input type="text" id="budgetName" placeholder="Budget Name (e.g., Monthly Groceries)" required>
-        
-        <select id="budgetCategory" required>
-            <option value="">Select Category</option>
-        </select>
-        
-        <input type="number" id="budgetAmount" placeholder="Amount (UGX)" step="0.01" min="0.01" required>
-        
-        <textarea id="budgetDescription" placeholder="Description (optional)" rows="3"></textarea>
-        
-        <button onclick="addBudget()">+ Add Budget</button>
-    </div>
-
-    <!-- Total Summary -->
-    <div id="totalSummary" style="display: none;">
-        <div class="total-summary">
-            <h2>Total Budget Allocated</h2>
-            <div class="amount" id="totalAmount">0.00 UGX</div>
+        <!-- Add Budget Form -->
+        <div class="add-section">
+            <h2>Add New Budget</h2>
+            <input type="text" id="budgetName" placeholder="Budget Name (e.g., Monthly Groceries)" required>
+            
+            <select id="budgetCategory" required>
+                <option value="">Select Category</option>
+            </select>
+            
+            <input type="number" id="budgetAmount" placeholder="Amount (UGX)" step="0.01" min="0.01" required>
+            
+            <textarea id="budgetDescription" placeholder="Description (optional)" rows="3"></textarea>
+            
+            <button onclick="addBudget()">+ Add Budget</button>
         </div>
-    </div>
 
-    <!-- Budget Cards -->
-    <div class="budget-grid" id="budgetGrid">
-        <div class="loading">Loading budgets...</div>
+        <!-- Total Summary -->
+        <div id="totalSummary" style="display: none;">
+            <div class="total-summary">
+                <h2>Total Budget Allocated</h2>
+                <div class="amount" id="totalAmount">0.00 UGX</div>
+            </div>
+        </div>
+
+        <!-- Budget Cards -->
+        <div class="budget-grid" id="budgetGrid">
+            <div class="loading">Loading budgets...</div>
+        </div>
     </div>
 
     <script>
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        const navLinks = navMenu.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideNav = navMenu.contains(event.target);
+            const isClickOnHamburger = hamburger.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Cookie handling
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -251,6 +464,7 @@
             return cookieValue;
         }
 
+        // Date formatting
         function formatDate(dateString) {
             const date = new Date(dateString);
             const options = { 
@@ -263,6 +477,7 @@
             return date.toLocaleDateString('en-US', options);
         }
 
+        // Load categories
         async function loadCategories() {
             try {
                 const response = await fetch('/api/categories/');
@@ -284,13 +499,10 @@
             }
         }
 
+        // Load budgets
         async function loadBudgets() {
             const token = localStorage.getItem('access_token');
             const budgetGrid = document.getElementById('budgetGrid');
-
-            // Update debug info
-            document.getElementById('apiEndpoint').textContent = '/api/budgets/';
-            document.getElementById('tokenPresent').textContent = token ? 'Yes' : 'No';
 
             console.log('=== Loading Budgets ===');
             console.log('Token:', token);
@@ -307,9 +519,6 @@
 
                 console.log('Response status:', response.status);
                 console.log('Response OK:', response.ok);
-                
-                // Update debug info
-                document.getElementById('responseStatus').textContent = response.status;
 
                 if (response.ok) {
                     const data = await response.json();
@@ -317,15 +526,11 @@
                     console.log('Data type:', typeof data);
                     console.log('Is array:', Array.isArray(data));
                     
-                    // Update debug info
-                    document.getElementById('responseType').textContent = Array.isArray(data) ? 'Array' : 'Object';
-                    
                     // Handle both array and paginated object responses
                     let budgets = [];
                     if (Array.isArray(data)) {
                         budgets = data;
                     } else if (data.results && Array.isArray(data.results)) {
-                        // Handle paginated response
                         budgets = data.results;
                     } else {
                         console.error('Unexpected data format:', data);
@@ -340,9 +545,6 @@
                     
                     console.log('Budgets array:', budgets);
                     console.log('Number of budgets:', budgets.length);
-                    
-                    // Update debug info
-                    document.getElementById('budgetsCount').textContent = budgets.length;
                     
                     if (budgets.length === 0) {
                         budgetGrid.innerHTML = `
@@ -416,6 +618,7 @@
             }
         }
 
+        // Add budget
         async function addBudget() {
             const name = document.getElementById('budgetName').value;
             const category = document.getElementById('budgetCategory').value;
@@ -472,6 +675,7 @@
             }
         }
 
+        // Delete budget
         async function deleteBudget(button) {
             const budgetId = button.getAttribute('data-budget-id');
             
@@ -505,6 +709,7 @@
             }
         }
 
+        // Logout
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('access_token');
