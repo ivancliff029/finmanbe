@@ -75,6 +75,9 @@ class Budget(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def total_amount(self):
+        return sum(item.amount for item in self.items.all())
+
     class Meta:
         ordering = ['-created_at']
 
