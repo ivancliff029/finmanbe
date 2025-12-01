@@ -269,6 +269,20 @@
             color: #666;
         }
 
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+        }
+
+        .category-loading {
+            color: #666;
+            font-style: italic;
+        }
+
         /* Mobile responsive */
         @media (max-width: 768px) {
             .hamburger {
@@ -322,7 +336,6 @@
                 font-size: 1.5rem;
             }
 
-            /* Hamburger animation */
             .hamburger.active span:nth-child(1) {
                 transform: rotate(-45deg) translate(-5px, 6px);
             }
@@ -388,6 +401,8 @@
     <div class="main-content">
         <h1>Budget Management</h1>
 
+        <div id="errorContainer"></div>
+
         <!-- Add Budget Form -->
         <div class="add-section">
             <h2>Add New Budget</h2>
@@ -428,7 +443,6 @@
             navMenu.classList.toggle('active');
         });
 
-        // Close menu when clicking on a link
         const navLinks = navMenu.querySelectorAll('a');
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
@@ -437,7 +451,6 @@
             });
         });
 
-        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
             const isClickInsideNav = navMenu.contains(event.target);
             const isClickOnHamburger = hamburger.contains(event.target);
@@ -447,6 +460,19 @@
                 navMenu.classList.remove('active');
             }
         });
+
+        // Error display
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    <strong>Error:</strong> ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
+        }
 
         // Cookie handling
         function getCookie(name) {
@@ -466,6 +492,7 @@
 
         // Date formatting
         function formatDate(dateString) {
+            if (!dateString) return 'N/A';
             const date = new Date(dateString);
             const options = { 
                 year: 'numeric', 
@@ -479,23 +506,69 @@
 
         // Load categories
         async function loadCategories() {
+            const token = localStorage.getItem('access_token');
+            const categorySelect = document.getElementById('budgetCategory');
+            
+            console.log('Loading categories for budget form...');
+            
+            // Show loading state
+            categorySelect.innerHTML = '<option value="">Loading categories...</option>';
+            
             try {
-                const response = await fetch('/api/categories/');
-                const data = await response.json();
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
                 
-                console.log('Categories loaded:', data);
-                
-                const categorySelect = document.getElementById('budgetCategory');
-                categorySelect.innerHTML = '<option value="">Select Category</option>';
-                
-                data.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category.id;
-                    option.textContent = category.name;
-                    categorySelect.appendChild(option);
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch('/api/categories/', {
+                    method: 'GET',
+                    headers: headers
                 });
+                
+                console.log('Categories response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Categories data:', data);
+                    
+                    // Reset select
+                    categorySelect.innerHTML = '<option value="">Select Category</option>';
+                    
+                    // Handle different response formats
+                    let categories = Array.isArray(data) ? data : (data.results || data.data || []);
+                    
+                    if (categories.length === 0) {
+                        categorySelect.innerHTML += '<option value="" disabled>No categories available - Create one first</option>';
+                        showError('No categories found. Please create categories first in the Categories page.');
+                    } else {
+                        categories.forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category.id;
+                            option.textContent = category.name;
+                            categorySelect.appendChild(option);
+                        });
+                        console.log(`Loaded ${categories.length} categories`);
+                    }
+                } else if (response.status === 401) {
+                    console.error('Unauthorized - redirecting to login');
+                    categorySelect.innerHTML = '<option value="">Session expired</option>';
+                    showError('Session expired. Redirecting to login...');
+                    setTimeout(() => {
+                        window.location.href = '/login/';
+                    }, 2000);
+                } else {
+                    const errorText = await response.text();
+                    console.error('Error loading categories:', errorText);
+                    categorySelect.innerHTML = '<option value="">Error loading categories</option>';
+                    showError('Failed to load categories. Please refresh the page.');
+                }
             } catch (error) {
                 console.error('Error loading categories:', error);
+                categorySelect.innerHTML = '<option value="">Error loading categories</option>';
+                showError('Network error loading categories: ' + error.message);
             }
         }
 
@@ -505,46 +578,39 @@
             const budgetGrid = document.getElementById('budgetGrid');
 
             console.log('=== Loading Budgets ===');
-            console.log('Token:', token);
-            console.log('Fetching from: /api/budgets/');
+            console.log('Token exists:', !!token);
 
             try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
                 const response = await fetch('/api/budgets/', {
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token && { 'Authorization': `Bearer ${token}` })
-                    }
+                    headers: headers
                 });
 
-                console.log('Response status:', response.status);
-                console.log('Response OK:', response.ok);
+                console.log('Budgets response status:', response.status);
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('Raw data received:', data);
-                    console.log('Data type:', typeof data);
-                    console.log('Is array:', Array.isArray(data));
+                    console.log('Budgets data:', data);
                     
-                    // Handle both array and paginated object responses
+                    // Handle different response formats
                     let budgets = [];
                     if (Array.isArray(data)) {
                         budgets = data;
                     } else if (data.results && Array.isArray(data.results)) {
                         budgets = data.results;
-                    } else {
-                        console.error('Unexpected data format:', data);
-                        budgetGrid.innerHTML = `
-                            <div class="no-budgets">
-                                <h2>Unexpected data format</h2>
-                                <p>Please check the console for details</p>
-                            </div>
-                        `;
-                        return;
+                    } else if (data.data && Array.isArray(data.data)) {
+                        budgets = data.data;
                     }
                     
-                    console.log('Budgets array:', budgets);
-                    console.log('Number of budgets:', budgets.length);
+                    console.log('Processed budgets:', budgets);
                     
                     if (budgets.length === 0) {
                         budgetGrid.innerHTML = `
@@ -561,28 +627,36 @@
                             return sum + amount;
                         }, 0);
                         
-                        document.getElementById('totalAmount').textContent = total.toFixed(2) + ' UGX';
+                        document.getElementById('totalAmount').textContent = total.toLocaleString('en-UG', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }) + ' UGX';
                         document.getElementById('totalSummary').style.display = 'block';
 
                         // Display budgets
                         budgetGrid.innerHTML = budgets.map(budget => `
-                            <div class="budget-card" id="budget-${budget.id}">
+                            <div class="budget-card">
                                 <div class="budget-name">${budget.name || 'Unnamed Budget'}</div>
-                                <div class="budget-category">${budget.category_name || 'Unknown'}</div>
-                                <div class="budget-amount">${parseFloat(budget.amount || 0).toFixed(2)} UGX</div>
+                                <div class="budget-category">${budget.category_name || budget.category || 'Unknown'}</div>
+                                <div class="budget-amount">${parseFloat(budget.amount || 0).toLocaleString('en-UG', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })} UGX</div>
                                 
                                 ${budget.description ? `<div class="budget-description">${budget.description}</div>` : ''}
                                 
-                                ${budget.user_name ? `<div class="budget-user">Created by: ${budget.user_name}</div>` : ''}
+                                ${budget.user_name || budget.username ? `<div class="budget-user">Created by: ${budget.user_name || budget.username}</div>` : ''}
                                 
                                 <div class="budget-meta">
                                     Created: ${formatDate(budget.created_at)}<br>
                                     Updated: ${formatDate(budget.updated_at)}
                                 </div>
                                 
-                                <button class="delete-btn" data-budget-id="${budget.id}" onclick="deleteBudget(this)">Delete</button>
+                                <button class="delete-btn" onclick="deleteBudget(${budget.id})">Delete</button>
                             </div>
                         `).join('');
+                        
+                        console.log(`Displayed ${budgets.length} budgets`);
                     }
                 } else if (response.status === 401) {
                     console.error('Unauthorized - redirecting to login');
@@ -602,31 +676,38 @@
                         <div class="no-budgets">
                             <h2>Error loading budgets</h2>
                             <p>Status: ${response.status}</p>
-                            <p>${errorText}</p>
+                            <p>Please try refreshing the page.</p>
                         </div>
                     `;
+                    showError(`Failed to load budgets (Status: ${response.status})`);
                 }
             } catch (error) {
                 console.error('Error loading budgets:', error);
                 budgetGrid.innerHTML = `
                     <div class="no-budgets">
                         <h2>Error loading budgets</h2>
-                        <p>Error: ${error.message}</p>
-                        <p>Please check your connection and try again</p>
+                        <p>Network error: ${error.message}</p>
+                        <p>Please check your connection and try again.</p>
                     </div>
                 `;
+                showError('Network error: ' + error.message);
             }
         }
 
         // Add budget
         async function addBudget() {
-            const name = document.getElementById('budgetName').value;
+            const name = document.getElementById('budgetName').value.trim();
             const category = document.getElementById('budgetCategory').value;
             const amount = document.getElementById('budgetAmount').value;
-            const description = document.getElementById('budgetDescription').value;
+            const description = document.getElementById('budgetDescription').value.trim();
             
             if (!name || !category || !amount) {
-                alert('Please fill in all required fields');
+                showError('Please fill in all required fields (Name, Category, Amount)');
+                return;
+            }
+
+            if (parseFloat(amount) <= 0) {
+                showError('Amount must be greater than 0');
                 return;
             }
 
@@ -635,24 +716,31 @@
             console.log('Adding budget:', { name, category, amount, description });
 
             try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
                 const response = await fetch('/api/budgets/', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        ...(token && { 'Authorization': `Bearer ${token}` })
-                    },
+                    headers: headers,
                     body: JSON.stringify({ 
                         name: name,
-                        category: category,
-                        amount: amount,
-                        description: description
+                        category: parseInt(category),
+                        amount: parseFloat(amount),
+                        description: description || ''
                     })
                 });
 
                 console.log('Add budget response:', response.status);
 
                 if (response.ok) {
+                    const newBudget = await response.json();
+                    console.log('New budget created:', newBudget);
                     alert('Budget added successfully!');
                     // Clear form
                     document.getElementById('budgetName').value = '';
@@ -662,50 +750,64 @@
                     // Reload budgets
                     await loadBudgets();
                 } else if (response.status === 401) {
-                    alert('Please login first');
-                    window.location.href = '/login/';
+                    showError('Please login first');
+                    setTimeout(() => {
+                        window.location.href = '/login/';
+                    }, 2000);
                 } else {
                     const error = await response.json();
                     console.error('Add budget error:', error);
-                    alert('Error: ' + JSON.stringify(error));
+                    showError('Error adding budget: ' + (error.detail || JSON.stringify(error)));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error adding budget: ' + error.message);
+                showError('Network error adding budget: ' + error.message);
             }
         }
 
         // Delete budget
-        async function deleteBudget(button) {
-            const budgetId = button.getAttribute('data-budget-id');
-            
+        async function deleteBudget(budgetId) {
             if (!confirm('Are you sure you want to delete this budget?')) {
                 return;
             }
 
             const token = localStorage.getItem('access_token');
 
+            console.log('Deleting budget:', budgetId);
+
             try {
+                const headers = {
+                    'X-CSRFToken': getCookie('csrftoken')
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
                 const response = await fetch(`/api/budgets/${budgetId}/`, {
                     method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        ...(token && { 'Authorization': `Bearer ${token}` })
-                    }
+                    headers: headers
                 });
+
+                console.log('Delete response:', response.status);
 
                 if (response.ok || response.status === 204) {
                     alert('Budget deleted successfully!');
                     await loadBudgets();
                 } else if (response.status === 401) {
-                    alert('Please login first');
-                    window.location.href = '/login/';
+                    showError('Please login first');
+                    setTimeout(() => {
+                        window.location.href = '/login/';
+                    }, 2000);
+                } else if (response.status === 404) {
+                    showError('Budget not found');
+                    await loadBudgets();
                 } else {
-                    alert('Error deleting budget');
+                    showError('Error deleting budget');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error deleting budget');
+                showError('Network error deleting budget: ' + error.message);
             }
         }
 
@@ -721,21 +823,21 @@
 
         // Load data when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
             const user = localStorage.getItem('user');
             const token = localStorage.getItem('access_token');
             
             console.log('=== Page Load ===');
-            console.log('User data:', user);
-            console.log('Token:', token);
+            console.log('Has user data:', !!user);
+            console.log('Has token:', !!token);
             
             if (user) {
                 try {
                     const userData = JSON.parse(user);
-                    document.getElementById('userName').textContent = userData.username;
+                    document.getElementById('userName').textContent = userData.username || 'User';
                     console.log('Logged in as:', userData.username);
                 } catch (e) {
                     console.error('Error parsing user data:', e);
+                    document.getElementById('userName').textContent = 'User';
                 }
             } else {
                 console.log('No user data found - redirecting to login');
@@ -743,8 +845,17 @@
                 return;
             }
             
-            loadCategories();
-            loadBudgets();
+            // Load categories first, then budgets
+            loadCategories().then(() => {
+                loadBudgets();
+            });
+        });
+
+        // Allow Enter key to add budget
+        document.getElementById('budgetAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addBudget();
+            }
         });
     </script>
 </body>
