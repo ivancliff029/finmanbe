@@ -5,370 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fin Man - Categories</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a192f 0%, #112240 50%, #1a365d 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
         }
 
+        /* --- Navigation --- */
         nav {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-logo {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0.5rem;
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
             z-index: 1000;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
         }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: white;
-            margin: 3px 0;
-            transition: 0.3s;
-            border-radius: 3px;
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;
         }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
+        .nav-logo {
+            color: #64ffda; font-size: 1.75rem; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;
         }
+        .nav-logo::before { content: "🗂️"; font-size: 1.5rem; }
+        
+        .hamburger { display: none; flex-direction: column; cursor: pointer; background: none; border: none; padding: 0.5rem; }
+        .hamburger span { width: 25px; height: 3px; background: #64ffda; margin: 3px 0; transition: 0.3s; }
 
-        .nav-menu li {
-            margin: 0;
-        }
-
+        .nav-menu { list-style: none; display: flex; gap: 0.5rem; align-items: center; }
         .nav-menu a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-            font-weight: normal;
-            background-color: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            color: #e0e0e0; text-decoration: none; padding: 0.6rem 1.2rem;
+            border-radius: 8px; transition: all 0.3s ease;
+            background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(100, 255, 218, 0.2);
         }
-
-        .nav-menu a:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
-
-        .user-info {
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .nav-menu a:hover { background: rgba(14, 165, 233, 0.2); transform: translateY(-2px); }
         .user-info button {
-            background-color: rgba(255,255,255,0.2);
-            color: white;
-            padding: 8px 16px;
-            border: 1px solid white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer;
         }
 
-        .user-info button:hover {
-            background-color: rgba(255,255,255,0.3);
-        }
-
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #333;
-            border-bottom: 3px solid #4CAF50;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
+        /* --- Layout --- */
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { color: #64ffda; font-size: 2.5rem; margin-bottom: 0.5rem; font-weight: 700; }
+        
+        /* --- Add Form --- */
         .add-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: rgba(17, 34, 64, 0.8); backdrop-filter: blur(10px);
+            padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;
+            border: 1px solid rgba(100, 255, 218, 0.1); display: flex; gap: 1rem;
+            align-items: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-
-        .add-section h2 {
-            margin-bottom: 15px;
-            color: #333;
+        .add-section input {
+            flex: 1; padding: 1rem; background: rgba(10, 25, 47, 0.6);
+            border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px;
+            color: #e0e0e0; font-size: 1rem;
         }
-
-        .add-form {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        .add-btn {
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            color: white; padding: 1rem 2rem; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: 600; font-size: 1rem; transition: transform 0.2s;
         }
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
 
-        .add-form input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .add-form button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            white-space: nowrap;
-        }
-
-        .add-form button:hover {
-            background-color: #45a049;
-        }
-
+        /* --- Grid --- */
         .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;
         }
-
+        
         .category-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: rgba(17, 34, 64, 0.6); backdrop-filter: blur(10px);
+            padding: 1.5rem; border-radius: 12px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            transition: all 0.3s ease; cursor: pointer;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 180px; /* Increased slightly for better spacing */
         }
-
         .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-5px); border-color: rgba(100, 255, 218, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
-
-        .category-info {
-            flex: 1;
+        
+        /* Updated Header to hold the delete button */
+        .card-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 1.5rem; 
         }
-
-        .category-name {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+        
+        .cat-name { 
+            font-size: 1.4rem; 
+            font-weight: 700; 
+            color: #e0e0e0; 
+            word-break: break-word; /* Prevents overflow */
+            max-width: 70%;
         }
+        
+        .cat-stats { margin-top: auto; }
+        .stat-row { display: flex; justify-content: space-between; margin-top: 0.8rem; font-size: 0.95rem; color: #94a3b8; }
+        .stat-val { color: #64ffda; font-weight: bold; }
 
-        .category-id {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .category-badge {
-            background-color: #e3f2fd;
-            color: #1976d2;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
+        /* Updated Delete Button: No longer absolute, sits in header */
         .delete-btn {
-            background-color: #f44336;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
+            background: rgba(239, 68, 68, 0.15); 
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3); 
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            z-index: 2;
+        }
+        .delete-btn:hover { background: rgba(239, 68, 68, 0.3); transform: translateY(-1px); }
+
+        /* --- Modal --- */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background: #112240; margin: 5% auto; padding: 0; border-radius: 12px;
+            width: 90%; max-width: 700px; border: 1px solid rgba(100, 255, 218, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-height: 80vh; display: flex; flex-direction: column;
+        }
+        .modal-header {
+            padding: 1.5rem; border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h2 { color: #64ffda; }
+        .close-modal { color: #94a3b8; font-size: 2rem; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 1.5rem; overflow-y: auto; }
+
+        /* Modal Table */
+        .item-list { width: 100%; border-collapse: collapse; }
+        .item-list th { text-align: left; padding: 1rem; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .item-list td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e0e0e0; }
+        
+        .use-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .use-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .use-btn.used {
+            background: transparent; border: 1px solid #10b981; color: #10b981;
+            cursor: default; box-shadow: none; transform: none;
         }
 
-        .delete-btn:hover {
-            background-color: #da190b;
-        }
+        .error-message { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; color: #fca5a5; padding: 1rem; margin-bottom: 1rem; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .no-categories {
-            text-align: center;
-            padding: 40px;
-            background: white;
-            border-radius: 8px;
-            color: #666;
-            grid-column: 1 / -1;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .total-summary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .total-summary h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: normal;
-        }
-
-        .total-summary .count {
-            font-size: 36px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        /* Mobile responsive */
         @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-
-            .nav-menu {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                flex-direction: column;
-                gap: 0;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }
-
-            .nav-menu.active {
-                max-height: 500px;
-            }
-
-            .nav-menu li {
-                width: 100%;
-                border-top: 1px solid rgba(255,255,255,0.1);
-            }
-
-            .nav-menu a {
-                padding: 15px 20px;
-                border-radius: 0;
-                border: none;
-                background-color: transparent;
-                width: 100%;
-                text-align: left;
-            }
-
-            .nav-menu a:hover {
-                background-color: rgba(255,255,255,0.1);
-            }
-
-            .user-info {
-                width: 100%;
-                padding: 15px 20px;
-                justify-content: space-between;
-                border-top: 1px solid rgba(255,255,255,0.1);
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .hamburger.active span:nth-child(1) {
-                transform: rotate(-45deg) translate(-5px, 6px);
-            }
-
-            .hamburger.active span:nth-child(2) {
-                opacity: 0;
-            }
-
-            .hamburger.active span:nth-child(3) {
-                transform: rotate(45deg) translate(-5px, -6px);
-            }
-
-            .main-content {
-                padding: 15px;
-            }
-
-            .add-form {
-                flex-direction: column;
-            }
-
-            .add-form input,
-            .add-form button {
-                width: 100%;
-            }
-
-            .category-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .total-summary .count {
-                font-size: 28px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-logo {
-                font-size: 1.25rem;
-            }
-
-            h1 {
-                font-size: 1.25rem;
-            }
-
-            .add-section {
-                padding: 15px;
-            }
-
-            .category-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .delete-btn {
-                width: 100%;
-                margin-left: 0;
-                margin-top: 10px;
-            }
+            .nav-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #0a192f; flex-direction: column; padding: 1rem; }
+            .nav-menu.active { display: flex; }
+            .hamburger { display: flex; }
+            .add-section { flex-direction: column; }
+            .add-section input, .add-btn { width: 100%; }
         }
     </style>
 </head>
@@ -376,11 +179,7 @@
     <nav>
         <div class="nav-container">
             <div class="nav-logo">Fin Man</div>
-            <button class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="/">Home</a></li>
                 <li><a href="/budget">Budget</a></li>
@@ -395,284 +194,262 @@
     </nav>
 
     <div class="main-content">
-        <h1>Categories Management</h1>
+        <div class="page-header">
+            <h1>Categories</h1>
+            <p style="color:#94a3b8">Organize your expenses. Click a category to view items.</p>
+        </div>
 
-        <!-- Add Category Form -->
+        <div id="errorContainer"></div>
+
         <div class="add-section">
-            <h2>Add New Category</h2>
-            <div class="add-form">
-                <input type="text" id="categoryName" placeholder="Category Name (e.g., Food, Transport)" required>
-                <button onclick="addCategory()">+ Add Category</button>
-            </div>
+            <input type="text" id="categoryName" placeholder="New Category Name (e.g. Utilities, Entertainment)" required>
+            <button class="add-btn" onclick="addCategory()">+ Add Category</button>
         </div>
 
-        <!-- Total Summary -->
-        <div id="totalSummary" style="display: none;">
-            <div class="total-summary">
-                <h2>Total Categories</h2>
-                <div class="count" id="totalCount">0</div>
-            </div>
-        </div>
-
-        <!-- Categories Grid -->
         <div class="category-grid" id="categoryGrid">
-            <div class="loading">Loading categories...</div>
+            <div style="color:#94a3b8; grid-column:1/-1; text-align:center; padding:3rem;">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Items Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalCategoryName">Category Details</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <table class="item-list">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalItemsBody">
+                        <!-- Items injected here -->
+                    </tbody>
+                </table>
+                <div id="modalEmptyState" style="display:none; text-align:center; padding:2rem; color:#94a3b8;">
+                    No items found in this category.
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Hamburger menu toggle
+        // Global State
+        let allCategories = [];
+        let allItems = [];
+
+        // Auth
+        const token = localStorage.getItem('access_token');
+        if(!token) window.location.href = '/login/';
+
+        // UI Helpers
         const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('navMenu');
-
-        hamburger.addEventListener('click', function() {
+        hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
 
-        const navLinks = navMenu.querySelectorAll('a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            });
-        });
-
-        document.addEventListener('click', function(event) {
-            const isClickInsideNav = navMenu.contains(event.target);
-            const isClickOnHamburger = hamburger.contains(event.target);
-            
-            if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            }
-        });
-
-        // Cookie handling
         function getCookie(name) {
-            let cookieValue = null;
+            let v = null;
             if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                const c = document.cookie.split(';');
+                for (let i = 0; i < c.length; i++) {
+                    const trim = c[i].trim();
+                    if (trim.substring(0, name.length + 1) === (name + '=')) {
+                        v = decodeURIComponent(trim.substring(name.length + 1));
                         break;
                     }
                 }
             }
-            return cookieValue;
+            return v;
         }
 
-        // Load categories
-        async function loadCategories() {
-            const token = localStorage.getItem('access_token');
-            const categoryGrid = document.getElementById('categoryGrid');
+        function formatMoney(amount) {
+            return parseFloat(amount).toLocaleString('en-UG', {
+                minimumFractionDigits: 0, maximumFractionDigits: 0
+            }) + ' UGX';
+        }
 
-            console.log('=== Loading Categories ===');
-            console.log('Token:', token);
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
 
+        // --- Data Loading ---
+        async function loadData() {
             try {
-                const response = await fetch('/api/categories/', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token && { 'Authorization': `Bearer ${token}` })
-                    }
-                });
+                // Fetch Categories and Items in parallel to link them
+                const [catRes, itemRes] = await Promise.all([
+                    fetch('/api/categories/', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/items/', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
 
-                console.log('Response status:', response.status);
+                if(catRes.status === 401 || itemRes.status === 401) { logout(); return; }
 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Categories data:', data);
-                    
-                    let categories = [];
-                    if (Array.isArray(data)) {
-                        categories = data;
-                    } else if (data.results && Array.isArray(data.results)) {
-                        categories = data.results;
-                    }
-                    
-                    if (categories.length === 0) {
-                        categoryGrid.innerHTML = `
-                            <div class="no-categories">
-                                <h2>No categories found</h2>
-                                <p>Start by adding your first category above!</p>
-                            </div>
-                        `;
-                        document.getElementById('totalSummary').style.display = 'none';
-                    } else {
-                        document.getElementById('totalCount').textContent = categories.length;
-                        document.getElementById('totalSummary').style.display = 'block';
+                if(catRes.ok && itemRes.ok) {
+                    const catData = await catRes.json();
+                    const itemData = await itemRes.json();
 
-                        // Display categories
-                        categoryGrid.innerHTML = categories.map(category => `
-                            <div class="category-card">
-                                <div class="category-info">
-                                    <div class="category-name">${category.name || 'Unnamed Category'}</div>
-                                    <div class="category-id">ID: ${category.id}</div>
-                                    <div>Total Amount: Ugx ${category.total_amount ? category.total_amount : '0.00'}</div>
-                                </div>
-                                <div style="display: flex; align-items: center;">
-                                    <span class="category-badge">Category</span>
-                                    <button class="delete-btn" data-category-id="${category.id}" onclick="deleteCategory(this)">Delete</button>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-                } else if (response.status === 401) {
-                    console.error('Unauthorized - redirecting to login');
-                    categoryGrid.innerHTML = `
-                        <div class="no-categories">
-                            <h2>Session expired</h2>
-                            <p>Redirecting to login...</p>
-                        </div>
-                    `;
-                    setTimeout(() => {
-                        window.location.href = '/login/';
-                    }, 2000);
-                } else {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
-                    categoryGrid.innerHTML = `
-                        <div class="no-categories">
-                            <h2>Error loading categories</h2>
-                            <p>Status: ${response.status}</p>
-                        </div>
-                    `;
+                    allCategories = Array.isArray(catData) ? catData : (catData.results || []);
+                    allItems = Array.isArray(itemData) ? itemData : (itemData.results || []);
+
+                    renderCategories();
                 }
-            } catch (error) {
-                console.error('Error loading categories:', error);
-                categoryGrid.innerHTML = `
-                    <div class="no-categories">
-                        <h2>Error loading categories</h2>
-                        <p>Error: ${error.message}</p>
-                    </div>
-                `;
+            } catch (e) {
+                console.error(e);
+                document.getElementById('categoryGrid').innerHTML = `<div class="error-message">Network Error. Check console.</div>`;
             }
         }
 
-        // Add category
-        async function addCategory() {
-            const name = document.getElementById('categoryName').value.trim();
-            
-            if (!name) {
-                alert('Please enter a category name');
+        function renderCategories() {
+            const grid = document.getElementById('categoryGrid');
+            if(allCategories.length === 0) {
+                grid.innerHTML = `<div style="text-align:center; color:#64748b; grid-column:1/-1; padding:3rem;">No categories yet. Add one!</div>`;
                 return;
             }
 
-            const token = localStorage.getItem('access_token');
+            grid.innerHTML = allCategories.map(cat => {
+                // Calculate stats for this category
+                const catItems = allItems.filter(i => i.category === cat.id);
+                const totalAmount = catItems.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+                const count = catItems.length;
 
-            console.log('Adding category:', name);
+                return `
+                <div class="category-card" onclick="openCategoryModal(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">
+                    <div class="card-header">
+                        <div class="cat-name">${cat.name}</div>
+                        <!-- Delete button moved to header to fix overlap -->
+                        <button class="delete-btn" onclick="deleteCategory(event, ${cat.id})">Delete</button>
+                    </div>
+                    
+                    <div class="cat-stats">
+                        <div class="stat-row">
+                            <span>Total Value</span>
+                            <span class="stat-val">${formatMoney(totalAmount)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Items Count</span>
+                            <span class="stat-val">${count} Items</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- Modal Logic ---
+        function openCategoryModal(catId, catName) {
+            const modal = document.getElementById('categoryModal');
+            const tbody = document.getElementById('modalItemsBody');
+            const emptyState = document.getElementById('modalEmptyState');
+            
+            document.getElementById('modalCategoryName').textContent = catName;
+
+            // Filter items for this category
+            const relevantItems = allItems.filter(i => i.category === catId);
+
+            if(relevantItems.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+                tbody.innerHTML = relevantItems.map(item => `
+                    <tr>
+                        <td>
+                            <div style="font-weight:600">${item.name}</div>
+                            <div style="font-size:0.8rem; color:#64748b">${item.description || ''}</div>
+                        </td>
+                        <td style="color:#64ffda; font-weight:bold">${formatMoney(item.amount)}</td>
+                        <td style="color:#94a3b8; font-size:0.9rem">${formatDate(item.created_at)}</td>
+                        <td>
+                            <button class="use-btn" id="btn-use-${item.id}" onclick="markAsUsed(this, '${item.name}', ${item.amount})">
+                                Use
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        // --- Actions ---
+        function markAsUsed(btn, name, amount) {
+            // Visual feedback
+            btn.classList.add('used');
+            btn.innerHTML = '&#10003; Used';
+            btn.onclick = null; // Disable further clicks
+        }
+
+        async function addCategory() {
+            const name = document.getElementById('categoryName').value;
+            if(!name) return;
 
             try {
-                const response = await fetch('/api/categories/', {
+                const res = await fetch('/api/categories/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken'),
-                        ...(token && { 'Authorization': `Bearer ${token}` })
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({ name: name })
                 });
 
-                console.log('Add category response:', response.status);
-
-                if (response.ok) {
-                    alert('Category added successfully!');
+                if(res.ok) {
                     document.getElementById('categoryName').value = '';
-                    await loadCategories();
-                } else if (response.status === 401) {
-                    alert('Please login first');
-                    window.location.href = '/login/';
+                    loadData(); // Reload to update list
                 } else {
-                    const error = await response.json();
-                    console.error('Add category error:', error);
-                    alert('Error: ' + JSON.stringify(error));
+                    alert("Failed to add category");
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error adding category: ' + error.message);
-            }
+            } catch(e) { console.error(e); }
         }
 
-        // Delete category
-        async function deleteCategory(button) {
-            const categoryId = button.getAttribute('data-category-id');
-            
-            if (!confirm('Are you sure you want to delete this category? This may affect items and budgets using this category.')) {
-                return;
-            }
-
-            const token = localStorage.getItem('access_token');
+        async function deleteCategory(event, id) {
+            event.stopPropagation(); // PREVENT MODAL FROM OPENING
+            if(!confirm("Delete this category? Items inside it might become uncategorized.")) return;
 
             try {
-                const response = await fetch(`/api/categories/${categoryId}/`, {
+                const res = await fetch(`/api/categories/${id}/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
-                        ...(token && { 'Authorization': `Bearer ${token}` })
+                        'Authorization': `Bearer ${token}`
                     }
                 });
-
-                if (response.ok || response.status === 204) {
-                    alert('Category deleted successfully!');
-                    await loadCategories();
-                } else if (response.status === 401) {
-                    alert('Please login first');
-                    window.location.href = '/login/';
-                } else {
-                    alert('Error deleting category');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error deleting category');
-            }
+                if(res.ok || res.status === 204) loadData();
+            } catch(e) { console.error(e); }
         }
 
-        // Logout
         function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-                localStorage.removeItem('user');
-                window.location.href = '/login/';
-            }
+            localStorage.clear();
+            window.location.href = '/login/';
         }
 
-        // Load data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = localStorage.getItem('user');
-            const token = localStorage.getItem('access_token');
-            
-            console.log('=== Page Load ===');
-            console.log('User data:', user);
-            console.log('Token:', token);
-            
-            if (user) {
-                try {
-                    const userData = JSON.parse(user);
-                    document.getElementById('userName').textContent = userData.username;
-                    console.log('Logged in as:', userData.username);
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                }
-            } else {
-                console.log('No user data found - redirecting to login');
-                window.location.href = '/login/';
-                return;
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const u = localStorage.getItem('user');
+            if(u) {
+                try { document.getElementById('userName').textContent = JSON.parse(u).username; } catch(e){}
             }
-            
-            loadCategories();
+            loadData();
         });
 
-        // Allow Enter key to add category
-        document.getElementById('categoryName').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addCategory();
-            }
-        });
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('categoryModal');
+            if (event.target == modal) closeModal();
+        }
     </script>
 </body>
 </html>
