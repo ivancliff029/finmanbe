@@ -109,3 +109,13 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'items', 'budgets', 'total_amount', 
                   'items_count', 'budgets_count', 'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
+
+class ToBuySerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Item
+        fields = ['id', 'name', 'category', 'category_name', 'amount', 
+                  'description', 'user', 'user_name', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
