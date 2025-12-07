@@ -17,7 +17,7 @@
         nav {
             background: rgba(10, 25, 47, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -32,143 +32,212 @@
         }
         .nav-logo {
             color: #64ffda;
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: bold;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
         }
-        .nav-logo::before { content: "💰"; font-size: 1.5rem; }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0.5rem;
+        .nav-logo::before { content: "💰"; font-size: 1.4rem; }
+        
+        .nav-menu { list-style: none; display: flex; gap: 1rem; align-items: center; }
+        .nav-menu a.nav-link {
+            color: #cbd5e1; text-decoration: none; padding: 0.5rem 1rem;
+            font-size: 0.95rem; transition: color 0.3s;
         }
-        .hamburger span {
-            width: 25px; height: 3px; background: #64ffda; margin: 3px 0; transition: 0.3s;
-        }
-        .nav-menu { list-style: none; display: flex; gap: 0.5rem; align-items: center; }
-        .nav-menu a {
-            color: #e0e0e0; text-decoration: none; padding: 0.6rem 1.2rem;
-            border-radius: 8px; transition: all 0.3s ease;
-            background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(100, 255, 218, 0.2);
-        }
-        .nav-menu a:hover { background: rgba(14, 165, 233, 0.2); transform: translateY(-2px); }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .user-info button {
-            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
-            color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer;
-        }
+        .nav-menu a.nav-link:hover, .nav-menu a.nav-link.active { color: #64ffda; }
 
+        /* --- Avatar & Dropdown --- */
+        .user-profile { position: relative; margin-left: 1rem; }
+        .avatar {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .avatar:hover { transform: scale(1.05); border-color: #64ffda; }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 55px; right: 0;
+            background: #112240;
+            min-width: 200px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            overflow: hidden;
+            z-index: 1001;
+        }
+        .dropdown-menu.show { display: block; animation: fadeIn 0.2s ease-out; }
+        .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10, 25, 47, 0.5);
+        }
+        .dropdown-name { display: block; color: #64ffda; font-weight: bold; margin-bottom: 2px; }
+        .dropdown-email { display: block; color: #94a3b8; font-size: 0.8rem; }
+        .dropdown-item {
+            display: block; padding: 0.8rem 1rem;
+            color: #e0e0e0; text-decoration: none;
+            transition: background 0.2s; cursor: pointer;
+        }
+        .dropdown-item:hover { background: rgba(100, 255, 218, 0.1); color: #64ffda; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Mobile Nav --- */
+        .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
+        .hamburger span { width: 25px; height: 2px; background: #64ffda; }
+        
         /* --- Layout --- */
         .main-content { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        .page-header h1 { color: #64ffda; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header h1 { color: #64ffda; font-size: 2.2rem; margin-bottom: 0.5rem; }
         .page-header p { color: #94a3b8; margin-bottom: 2rem; }
-        .content-wrapper { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; }
+        .content-wrapper { display: grid; grid-template-columns: 380px 1fr; gap: 2rem; }
 
         /* --- Forms --- */
         .add-section {
             background: rgba(17, 34, 64, 0.6); backdrop-filter: blur(10px);
-            padding: 2rem; border-radius: 12px;
+            padding: 1.5rem; border-radius: 12px;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            position: sticky; top: 100px; height: fit-content;
+            position: sticky; top: 90px; height: fit-content;
         }
-        .add-section h2 { color: #64ffda; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; color: #cbd5e1; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .add-section h2 { color: #64ffda; margin-bottom: 1.2rem; font-size: 1.3rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; color: #cbd5e1; margin-bottom: 0.4rem; font-size: 0.9rem; }
         .add-section input, .add-section select, .add-section textarea {
-            width: 100%; padding: 0.8rem; background: rgba(10, 25, 47, 0.8);
-            border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px; color: #e0e0e0;
+            width: 100%; padding: 0.7rem; background: rgba(10, 25, 47, 0.8);
+            border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 6px; color: #e0e0e0;
+            font-size: 0.9rem;
         }
+        .add-section input:focus, .add-section select:focus { outline: none; border-color: #64ffda; }
         .add-section button {
             width: 100%; background: linear-gradient(135deg, #0ea5e9, #06b6d4);
-            color: white; padding: 1rem; border: none; border-radius: 8px;
+            color: white; padding: 0.8rem; border: none; border-radius: 6px;
             cursor: pointer; font-weight: 600; margin-top: 0.5rem;
+            transition: opacity 0.3s;
         }
+        .add-section button:hover { opacity: 0.9; }
 
-        /* --- Budget Cards --- */
-        .summary-section { margin-bottom: 2rem; }
+        /* --- Budget Summary & Grid --- */
+        .summary-section { margin-bottom: 1.5rem; }
         .total-summary {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(6, 182, 212, 0.2));
-            padding: 2rem; border-radius: 12px; display: flex;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(6, 182, 212, 0.15));
+            padding: 1.5rem; border-radius: 12px; display: flex;
             justify-content: space-between; align-items: center;
             border: 1px solid rgba(100, 255, 218, 0.2);
         }
-        .amount { font-size: 2.5rem; font-weight: 700; color: #64ffda; }
+        .amount { font-size: 2rem; font-weight: 700; color: #64ffda; }
         .summary-select {
             background: rgba(10, 25, 47, 0.8); color: #64ffda;
-            padding: 0.7rem 1.2rem; border-radius: 8px; border: 1px solid rgba(100, 255, 218, 0.3);
+            padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid rgba(100, 255, 218, 0.3);
         }
         
-        .budget-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .budget-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.2rem; min-height: 200px; }
         .budget-card {
-            background: rgba(17, 34, 64, 0.6); padding: 1.5rem;
+            background: rgba(17, 34, 64, 0.6); padding: 1.2rem;
             border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.1);
-            transition: transform 0.3s;
+            transition: transform 0.3s; display: flex; flex-direction: column;
         }
-        .budget-card:hover { transform: translateY(-5px); border-color: rgba(100, 255, 218, 0.3); }
-        .budget-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
-        .budget-name { font-size: 1.3rem; font-weight: bold; }
+        .budget-card:hover { transform: translateY(-4px); border-color: rgba(100, 255, 218, 0.3); }
+        .budget-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; align-items: flex-start; }
+        .budget-name { font-size: 1.2rem; font-weight: bold; color: #e2e8f0; }
         .project-btn {
-            background: #0ea5e9; color: white; border: none; padding: 0.5rem 1rem;
-            border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+            background: transparent; color: #0ea5e9; border: 1px solid #0ea5e9; padding: 0.3rem 0.6rem;
+            border-radius: 4px; cursor: pointer; font-size: 0.8rem; transition: 0.3s;
         }
-        .budget-amount { font-size: 2rem; color: #64ffda; font-weight: 700; margin: 1rem 0; }
-        .tags-container { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-        .budget-category { background: rgba(14, 165, 233, 0.2); color: #5eead4; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem; }
-        .budget-type-badge { background: rgba(100, 255, 218, 0.1); color: #64ffda; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem; text-transform: capitalize; }
-        .budget-description { color: #94a3b8; font-size: 0.95rem; margin-bottom: 1rem; }
+        .project-btn:hover { background: #0ea5e9; color: white; }
+        
+        .budget-amount { font-size: 1.8rem; color: #64ffda; font-weight: 700; margin: 0.5rem 0; }
+        .tags-container { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+        .pill { padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; text-transform: capitalize; }
+        .pill-category { background: rgba(14, 165, 233, 0.2); color: #5eead4; }
+        .pill-type { background: rgba(100, 255, 218, 0.1); color: #64ffda; }
+        .budget-description { color: #94a3b8; font-size: 0.9rem; margin-bottom: auto; padding-bottom: 1rem; }
         .delete-btn {
-            width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5;
-            padding: 0.7rem; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer;
+            width: 100%; background: rgba(239, 68, 68, 0.1); color: #fca5a5;
+            padding: 0.6rem; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer;
+            transition: 0.2s;
         }
+        .delete-btn:hover { background: rgba(239, 68, 68, 0.2); }
+
+        /* --- Pagination Controls --- */
+        .pagination-container {
+            margin-top: 2rem; display: flex; justify-content: center; align-items: center; gap: 1rem;
+        }
+        .page-btn {
+            background: rgba(17, 34, 64, 0.8); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.2);
+            padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: 0.2s;
+        }
+        .page-btn:hover:not(:disabled) { background: rgba(14, 165, 233, 0.2); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: transparent; }
+        .page-info { color: #94a3b8; font-size: 0.9rem; }
 
         /* --- Modal --- */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
         .modal-content {
             background: #112240; margin: 10% auto; padding: 2rem; border-radius: 12px;
-            width: 90%; max-width: 550px; border: 1px solid rgba(100, 255, 218, 0.2);
+            width: 90%; max-width: 500px; border: 1px solid rgba(100, 255, 218, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .close-modal { float: right; font-size: 2rem; cursor: pointer; color: #fff; }
-        .projection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+        .close-modal { float: right; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
+        .close-modal:hover { color: white; }
+        .projection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
         .projection-card {
             background: rgba(10, 25, 47, 0.6); padding: 1rem; border-radius: 8px;
             text-align: center; border: 1px solid rgba(100, 255, 218, 0.1);
         }
         .projection-card.highlight { border-color: #64ffda; background: rgba(14, 165, 233, 0.1); }
-        .projection-value { display: block; font-size: 1.3rem; color: #64ffda; font-weight: bold; }
-        .projection-label { color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; }
+        .projection-value { display: block; font-size: 1.2rem; color: #64ffda; font-weight: bold; margin-top: 5px; }
+        .projection-label { color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .error-message { background: rgba(239,68,68,0.2); color: #fca5a5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; }
 
         @media (max-width: 1024px) { .content-wrapper { grid-template-columns: 1fr; } .add-section { position: static; } }
         @media (max-width: 768px) { 
-            .nav-menu { display: none; flex-direction: column; width: 100%; position: absolute; top: 100%; left: 0; background: #0a192f; padding: 1rem; }
-            .nav-menu.active { display: flex; }
+            .nav-menu { display: none; }
             .hamburger { display: flex; }
             .budget-grid { grid-template-columns: 1fr; }
+            .user-profile { margin-left: auto; margin-right: 1rem; }
         }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-container">
-            <div class="nav-logo">Fin Man</div>
+            <a href="/" class="nav-logo">Fin Man</a>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/budget" class="nav-link active">Budget</a></li>
+                <li><a href="/items" class="nav-link">Items</a></li>
+                <li><a href="/categories" class="nav-link">Categories</a></li>
+            </ul>
+
+            <!-- Avatar Dropdown -->
+            <div class="user-profile">
+                <div class="avatar" onclick="toggleUserDropdown()">
+                    <span id="userInitials">?</span>
+                </div>
+                <div class="dropdown-menu" id="userDropdown">
+                    <div class="dropdown-header">
+                        <span class="dropdown-name" id="dropdownUserName">Guest</span>
+                        <span class="dropdown-email" id="dropdownUserEmail">Not logged in</span>
+                    </div>
+                    <a href="/profile" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item" onclick="logout()">Logout</a>
+                </div>
+            </div>
+
             <button class="hamburger" id="hamburger">
                 <span></span><span></span><span></span>
             </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/budget">Budget</a></li>
-                <li><a href="/items">Items</a></li>
-                <li><a href="/categories">Categories</a></li>
-                <li class="user-info">
-                    <span id="userName">Guest</span>
-                    <button onclick="logout()">Logout</button>
-                </li>
-            </ul>
         </div>
     </nav>
 
@@ -181,7 +250,7 @@
         <div id="errorContainer"></div>
 
         <div class="content-wrapper">
-            <!-- Add Budget Form -->
+            <!-- Left: Add Form -->
             <div class="add-section">
                 <h2>Add New Budget</h2>
                 <div class="form-group">
@@ -216,12 +285,12 @@
                 <button onclick="addBudget()">Add Budget</button>
             </div>
 
-            <!-- Right Column -->
+            <!-- Right: List & Pagination -->
             <div>
                 <div class="summary-section" id="totalSummaryContainer" style="display: none;">
                     <div class="total-summary">
                         <div>
-                            <h2 style="color: #94a3b8; font-size: 1rem; margin-bottom: 0.5rem;">Total Allocation</h2>
+                            <h2 style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem; text-transform: uppercase;">Total Allocation</h2>
                             <div class="amount" id="totalAmount">0 UGX</div>
                         </div>
                         <select id="summaryViewSelect" class="summary-select" onchange="updateTotalSummary()">
@@ -234,7 +303,14 @@
                 </div>
 
                 <div class="budget-grid" id="budgetGrid">
-                    <div style="text-align: center; color: #94a3b8; padding: 2rem;">Loading budgets...</div>
+                    <div style="text-align: center; color: #94a3b8; padding: 2rem; grid-column: 1/-1;">Loading budgets...</div>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination-container" id="paginationControls" style="display: none;">
+                    <button class="page-btn" onclick="changePage(-1)" id="prevBtn">Previous</button>
+                    <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                    <button class="page-btn" onclick="changePage(1)" id="nextBtn">Next</button>
                 </div>
             </div>
         </div>
@@ -244,8 +320,8 @@
     <div id="projectionModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle" style="color: #64ffda; margin-bottom: 1rem;">Projections</h2>
-            <p>Based on <strong id="modalBaseType"></strong> budget of <strong id="modalBaseAmount"></strong>:</p>
+            <h2 id="modalTitle" style="color: #64ffda; margin-bottom: 0.5rem;">Projections</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Based on <strong id="modalBaseType" style="color:#e2e8f0"></strong> budget of <strong id="modalBaseAmount" style="color:#e2e8f0"></strong></p>
             <div class="projection-grid">
                 <div class="projection-card" id="cardDaily"><span class="projection-label">Daily</span><span class="projection-value" id="projDaily">0</span></div>
                 <div class="projection-card" id="cardWeekly"><span class="projection-label">Weekly</span><span class="projection-value" id="projWeekly">0</span></div>
@@ -258,7 +334,11 @@
     <script>
         // Global variables
         let storedBudgets = [];
-        let categoriesMap = {}; // Maps ID to Name: { 1: "Food", 2: "Rent" }
+        let categoriesMap = {};
+        
+        // Pagination Globals
+        let currentPage = 1;
+        const itemsPerPage = 4;
 
         // --- Auth & Setup ---
         function getAuthToken() {
@@ -268,6 +348,25 @@
         function logout() {
             localStorage.clear();
             window.location.href = '/login/';
+        }
+
+        function toggleUserDropdown() {
+            document.getElementById('userDropdown').classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.closest('.user-profile')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+            // Close modal if clicked outside
+            if (event.target == document.getElementById('projectionModal')) closeModal();
         }
 
         // --- Helpers ---
@@ -330,6 +429,67 @@
             document.getElementById('totalAmount').textContent = formatMoney(total);
         }
 
+        // --- Pagination Logic ---
+        function renderBudgets() {
+            const grid = document.getElementById('budgetGrid');
+            const controls = document.getElementById('paginationControls');
+            
+            if (storedBudgets.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 3rem;">No budgets found. Create your first budget!</div>';
+                controls.style.display = 'none';
+                return;
+            }
+
+            // Calculate slices
+            const totalPages = Math.ceil(storedBudgets.length / itemsPerPage);
+            
+            // Boundary check
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedItems = storedBudgets.slice(startIndex, endIndex);
+
+            // Render Items
+            grid.innerHTML = paginatedItems.map(b => {
+                const catName = categoriesMap[b.category] || b.category_name || 'General';
+                const safeName = (b.name || '').replace(/'/g, "\\'");
+                const type = b.type || 'monthly';
+                
+                return `
+                <div class="budget-card">
+                    <div class="budget-header">
+                        <div class="budget-name">${b.name}</div>
+                        <button class="project-btn" onclick="openProjection('${safeName}', ${b.amount}, '${type}')">
+                            📈 Project
+                        </button>
+                    </div>
+                    
+                    <div class="tags-container">
+                        <span class="pill pill-category">${catName}</span>
+                        <span class="pill pill-type">${type}</span>
+                    </div>
+
+                    <div class="budget-amount">${formatMoney(b.amount)}</div>
+                    ${b.description ? `<div class="budget-description">${b.description}</div>` : '<div class="budget-description"></div>'}
+                    
+                    <button class="delete-btn" onclick="deleteBudget(${b.id})">Delete Budget</button>
+                </div>
+            `}).join('');
+
+            // Update Controls
+            controls.style.display = 'flex';
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (currentPage === totalPages);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderBudgets();
+        }
+
         // --- Data Loading ---
         async function loadCategories() {
             const token = getAuthToken();
@@ -347,25 +507,17 @@
                     const cats = Array.isArray(data) ? data : (data.results || []);
                     
                     select.innerHTML = '<option value="">Select Category</option>';
-                    categoriesMap = {}; // Reset map
+                    categoriesMap = {}; 
                     
                     cats.forEach(c => {
-                        // Store in map for display later
                         categoriesMap[c.id] = c.name;
-                        
-                        // Add to dropdown
                         const opt = document.createElement('option');
                         opt.value = c.id;
                         opt.textContent = c.name;
                         select.appendChild(opt);
                     });
-                } else {
-                    console.error("Failed to load categories", res.status);
-                    select.innerHTML = '<option value="">Error loading categories</option>';
                 }
-            } catch (e) {
-                console.error("Network Error Categories:", e);
-            }
+            } catch (e) { console.error("Network Error Categories:", e); }
         }
 
         async function loadBudgets() {
@@ -382,49 +534,19 @@
                 if (res.ok) {
                     const data = await res.json();
                     storedBudgets = Array.isArray(data) ? data : (data.results || []);
-
-                    if (storedBudgets.length === 0) {
-                        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 3rem;">No budgets found. Create your first budget!</div>';
-                        document.getElementById('totalSummaryContainer').style.display = 'none';
-                        return;
-                    }
-
+                    
                     updateTotalSummary();
+                    
+                    // Reset to page 1 on new data load
+                    currentPage = 1;
+                    renderBudgets();
 
-                    grid.innerHTML = storedBudgets.map(b => {
-                        // Use the map to get category name. Fallback to ID or "Unknown" if not found
-                        const catName = categoriesMap[b.category] || b.category_name || 'General';
-                        const safeName = (b.name || '').replace(/'/g, "\\'");
-                        const type = b.type || 'monthly';
-                        
-                        return `
-                        <div class="budget-card">
-                            <div class="budget-header">
-                                <div class="budget-name">${b.name}</div>
-                                <button class="project-btn" onclick="openProjection('${safeName}', ${b.amount}, '${type}')">
-                                    📈 Project
-                                </button>
-                            </div>
-                            
-                            <div class="tags-container">
-                                <span class="budget-category">${catName}</span>
-                                <span class="budget-type-badge">${type}</span>
-                            </div>
-
-                            <div class="budget-amount">${formatMoney(b.amount)}</div>
-                            ${b.description ? `<div class="budget-description">${b.description}</div>` : ''}
-                            
-                            <button class="delete-btn" onclick="deleteBudget(${b.id})">Delete Budget</button>
-                        </div>
-                    `}).join('');
                 } else {
-                    const errText = await res.text();
-                    console.error("API Error:", errText);
                     grid.innerHTML = `<div class="error-message">Error loading budgets. (Status: ${res.status})</div>`;
                 }
             } catch (error) {
                 console.error(error);
-                grid.innerHTML = '<div class="error-message">Network error loading budgets. Check console.</div>';
+                grid.innerHTML = '<div class="error-message">Network error loading budgets.</div>';
             }
         }
 
@@ -459,12 +581,10 @@
                 });
 
                 if (res.ok) {
-                    // Clear form
                     document.getElementById('budgetName').value = '';
                     document.getElementById('budgetAmount').value = '';
                     document.getElementById('budgetDescription').value = '';
-                    // Reload data
-                    await loadBudgets();
+                    await loadBudgets(); // Reloads and resets pagination
                 } else {
                     const err = await res.json();
                     showError('Failed: ' + JSON.stringify(err));
@@ -507,7 +627,6 @@
             document.getElementById('projMonthly').textContent = formatMoney(daily * 30);
             document.getElementById('projYearly').textContent = formatMoney(daily * 365);
 
-            // Highlight relevant card
             document.querySelectorAll('.projection-card').forEach(c => c.classList.remove('highlight'));
             const t = type.toLowerCase();
             if(t.includes('day')) document.getElementById('cardDaily').classList.add('highlight');
@@ -523,13 +642,9 @@
         }
 
         document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('hamburger').classList.toggle('active');
-            document.getElementById('navMenu').classList.toggle('active');
+            document.getElementById('navMenu').style.display = 
+                document.getElementById('navMenu').style.display === 'flex' ? 'none' : 'flex';
         });
-
-        window.onclick = function(e) {
-            if (e.target == document.getElementById('projectionModal')) closeModal();
-        }
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', async () => {
@@ -541,10 +656,19 @@
 
             try {
                 const user = JSON.parse(userStr);
-                document.getElementById('userName').textContent = user.username || 'User';
+                const userName = user.username || 'User';
+                const userEmail = user.email || '';
+                
+                // Update dropdown info
+                document.getElementById('dropdownUserName').textContent = userName;
+                document.getElementById('dropdownUserEmail').textContent = userEmail;
+                
+                // Generate initials for avatar
+                const initials = userName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                document.getElementById('userInitials').textContent = initials;
+
             } catch(e) { console.error("Error parsing user data"); }
 
-            // Load Categories FIRST to map IDs to Names, THEN load Budgets
             await loadCategories();
             await loadBudgets();
         });

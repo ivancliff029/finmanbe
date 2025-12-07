@@ -18,7 +18,7 @@
         nav {
             background: rgba(10, 25, 47, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -28,24 +28,62 @@
             max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;
         }
         .nav-logo {
-            color: #64ffda; font-size: 1.75rem; font-weight: bold; display: flex; align-items: center; gap: 0.5rem;
+            color: #64ffda; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 0.5rem; text-decoration: none;
         }
-        .nav-logo::before { content: "🗂️"; font-size: 1.5rem; }
+        .nav-logo::before { content: "🗂️"; font-size: 1.4rem; }
         
-        .hamburger { display: none; flex-direction: column; cursor: pointer; background: none; border: none; padding: 0.5rem; }
-        .hamburger span { width: 25px; height: 3px; background: #64ffda; margin: 3px 0; transition: 0.3s; }
+        .nav-menu { list-style: none; display: flex; gap: 1rem; align-items: center; }
+        .nav-menu a.nav-link {
+            color: #cbd5e1; text-decoration: none; padding: 0.5rem 1rem;
+            font-size: 0.95rem; transition: color 0.3s;
+        }
+        .nav-menu a.nav-link:hover, .nav-menu a.nav-link.active { color: #64ffda; }
 
-        .nav-menu { list-style: none; display: flex; gap: 0.5rem; align-items: center; }
-        .nav-menu a {
-            color: #e0e0e0; text-decoration: none; padding: 0.6rem 1.2rem;
-            border-radius: 8px; transition: all 0.3s ease;
-            background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(100, 255, 218, 0.2);
-        }
-        .nav-menu a:hover { background: rgba(14, 165, 233, 0.2); transform: translateY(-2px); }
-        .user-info button {
+        /* --- Avatar & Dropdown --- */
+        .user-profile { position: relative; margin-left: 1rem; }
+        .avatar {
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, #0ea5e9, #06b6d4);
-            color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            transition: transform 0.2s;
+            user-select: none;
         }
+        .avatar:hover { transform: scale(1.05); border-color: #64ffda; }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 55px; right: 0;
+            background: #112240;
+            min-width: 200px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            overflow: hidden;
+            z-index: 1001;
+        }
+        .dropdown-menu.show { display: block; animation: fadeIn 0.2s ease-out; }
+        .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10, 25, 47, 0.5);
+        }
+        .dropdown-name { display: block; color: #64ffda; font-weight: bold; margin-bottom: 2px; }
+        .dropdown-email { display: block; color: #94a3b8; font-size: 0.8rem; }
+        .dropdown-item {
+            display: block; padding: 0.8rem 1rem;
+            color: #e0e0e0; text-decoration: none;
+            transition: background 0.2s; cursor: pointer;
+        }
+        .dropdown-item:hover { background: rgba(100, 255, 218, 0.1); color: #64ffda; }
+
+        /* --- Mobile Nav --- */
+        .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
+        .hamburger span { width: 25px; height: 2px; background: #64ffda; }
 
         /* --- Layout --- */
         .main-content { max-width: 1200px; margin: 0 auto; padding: 2rem; }
@@ -60,13 +98,13 @@
             align-items: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         .add-section input {
-            flex: 1; padding: 1rem; background: rgba(10, 25, 47, 0.6);
+            flex: 1; padding: 0.8rem; background: rgba(10, 25, 47, 0.6);
             border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 8px;
             color: #e0e0e0; font-size: 1rem;
         }
         .add-btn {
             background: linear-gradient(135deg, #0ea5e9, #06b6d4);
-            color: white; padding: 1rem 2rem; border: none; border-radius: 8px;
+            color: white; padding: 0.8rem 2rem; border: none; border-radius: 8px;
             cursor: pointer; font-weight: 600; font-size: 1rem; transition: transform 0.2s;
         }
         .add-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
@@ -74,6 +112,7 @@
         /* --- Grid --- */
         .category-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;
+            min-height: 200px;
         }
         
         .category-card {
@@ -83,47 +122,44 @@
             transition: all 0.3s ease; cursor: pointer;
             position: relative; overflow: hidden;
             display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 180px; /* Increased slightly for better spacing */
+            min-height: 180px; 
         }
         .category-card:hover {
             transform: translateY(-5px); border-color: rgba(100, 255, 218, 0.4);
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         
-        /* Updated Header to hold the delete button */
         .card-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-start; 
-            margin-bottom: 1.5rem; 
+            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; 
         }
-        
         .cat-name { 
-            font-size: 1.4rem; 
-            font-weight: 700; 
-            color: #e0e0e0; 
-            word-break: break-word; /* Prevents overflow */
-            max-width: 70%;
+            font-size: 1.4rem; font-weight: 700; color: #e0e0e0; 
+            word-break: break-word; max-width: 70%;
         }
         
         .cat-stats { margin-top: auto; }
         .stat-row { display: flex; justify-content: space-between; margin-top: 0.8rem; font-size: 0.95rem; color: #94a3b8; }
         .stat-val { color: #64ffda; font-weight: bold; }
 
-        /* Updated Delete Button: No longer absolute, sits in header */
         .delete-btn {
-            background: rgba(239, 68, 68, 0.15); 
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.3); 
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            z-index: 2;
+            background: rgba(239, 68, 68, 0.15); color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.4rem 0.8rem;
+            border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+            font-weight: 600; transition: all 0.2s; z-index: 2;
         }
         .delete-btn:hover { background: rgba(239, 68, 68, 0.3); transform: translateY(-1px); }
+
+        /* --- Pagination --- */
+        .pagination-container {
+            margin-top: 2rem; display: flex; justify-content: center; align-items: center; gap: 1rem;
+        }
+        .page-btn {
+            background: rgba(17, 34, 64, 0.8); color: #64ffda; border: 1px solid rgba(100, 255, 218, 0.2);
+            padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: 0.2s;
+        }
+        .page-btn:hover:not(:disabled) { background: rgba(14, 165, 233, 0.2); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: transparent; }
+        .page-info { color: #94a3b8; font-size: 0.9rem; }
 
         /* --- Modal --- */
         .modal {
@@ -164,32 +200,47 @@
 
         .error-message { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; color: #fca5a5; padding: 1rem; margin-bottom: 1rem; }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
-            .nav-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #0a192f; flex-direction: column; padding: 1rem; }
-            .nav-menu.active { display: flex; }
+            .nav-menu { display: none; } 
             .hamburger { display: flex; }
             .add-section { flex-direction: column; }
             .add-section input, .add-btn { width: 100%; }
+            .user-profile { margin-left: auto; margin-right: 1rem; }
         }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-container">
-            <div class="nav-logo">Fin Man</div>
-            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+            <a href="/" class="nav-logo">Fin Man</a>
+            
             <ul class="nav-menu" id="navMenu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/budget">Budget</a></li>
-                <li><a href="/items">Items</a></li>
-                <li><a href="/categories">Categories</a></li>
-                <li class="user-info">
-                    <span id="userName">Guest</span>
-                    <button onclick="logout()">Logout</button>
-                </li>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/budget" class="nav-link">Budget</a></li>
+                <li><a href="/items" class="nav-link">Items</a></li>
+                <li><a href="/categories" class="nav-link active">Categories</a></li>
             </ul>
+
+            <!-- Avatar Dropdown -->
+            <div class="user-profile">
+                <div class="avatar" onclick="toggleUserDropdown()">
+                    <span id="userInitials">?</span>
+                </div>
+                <div class="dropdown-menu" id="userDropdown">
+                    <div class="dropdown-header">
+                        <span class="dropdown-name" id="dropdownUserName">Guest</span>
+                        <span class="dropdown-email" id="dropdownUserEmail">Not logged in</span>
+                    </div>
+                    <a href="/profile" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item" onclick="logout()">Logout</a>
+                </div>
+            </div>
+
+            <button class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
@@ -208,6 +259,13 @@
 
         <div class="category-grid" id="categoryGrid">
             <div style="color:#94a3b8; grid-column:1/-1; text-align:center; padding:3rem;">Loading...</div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="paginationControls" style="display: none;">
+            <button class="page-btn" onclick="changePage(-1)" id="prevBtn">Previous</button>
+            <span class="page-info" id="pageInfo">Page 1 of 1</span>
+            <button class="page-btn" onclick="changePage(1)" id="nextBtn">Next</button>
         </div>
     </div>
 
@@ -228,9 +286,7 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody id="modalItemsBody">
-                        <!-- Items injected here -->
-                    </tbody>
+                    <tbody id="modalItemsBody"></tbody>
                 </table>
                 <div id="modalEmptyState" style="display:none; text-align:center; padding:2rem; color:#94a3b8;">
                     No items found in this category.
@@ -243,18 +299,38 @@
         // Global State
         let allCategories = [];
         let allItems = [];
+        
+        // Pagination Globals
+        let currentPage = 1;
+        const itemsPerPage = 6;
 
         // Auth
         const token = localStorage.getItem('access_token');
         if(!token) window.location.href = '/login/';
 
-        // UI Helpers
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('navMenu');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
+        // --- UI Interactions ---
+        function toggleUserDropdown() {
+            document.getElementById('userDropdown').classList.toggle('show');
+        }
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+             const nav = document.getElementById('navMenu');
+             nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
         });
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.closest('.user-profile')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    if (dropdowns[i].classList.contains('show')) {
+                        dropdowns[i].classList.remove('show');
+                    }
+                }
+            }
+            // Close modal
+            if (event.target == document.getElementById('categoryModal')) closeModal();
+        }
 
         function getCookie(name) {
             let v = null;
@@ -284,7 +360,7 @@
         // --- Data Loading ---
         async function loadData() {
             try {
-                // Fetch Categories and Items in parallel to link them
+                // Fetch Categories and Items in parallel
                 const [catRes, itemRes] = await Promise.all([
                     fetch('/api/categories/', { headers: { 'Authorization': `Bearer ${token}` } }),
                     fetch('/api/items/', { headers: { 'Authorization': `Bearer ${token}` } })
@@ -299,6 +375,8 @@
                     allCategories = Array.isArray(catData) ? catData : (catData.results || []);
                     allItems = Array.isArray(itemData) ? itemData : (itemData.results || []);
 
+                    // Reset to first page on load
+                    currentPage = 1;
                     renderCategories();
                 }
             } catch (e) {
@@ -309,13 +387,26 @@
 
         function renderCategories() {
             const grid = document.getElementById('categoryGrid');
+            const controls = document.getElementById('paginationControls');
+
             if(allCategories.length === 0) {
                 grid.innerHTML = `<div style="text-align:center; color:#64748b; grid-column:1/-1; padding:3rem;">No categories yet. Add one!</div>`;
+                controls.style.display = 'none';
                 return;
             }
 
-            grid.innerHTML = allCategories.map(cat => {
-                // Calculate stats for this category
+            // Pagination Logic
+            const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const visibleCats = allCategories.slice(startIndex, endIndex);
+
+            // Render Grid
+            grid.innerHTML = visibleCats.map(cat => {
+                // Calculate stats based on ALL items, not just visible ones
                 const catItems = allItems.filter(i => i.category === cat.id);
                 const totalAmount = catItems.reduce((sum, i) => sum + parseFloat(i.amount), 0);
                 const count = catItems.length;
@@ -324,7 +415,6 @@
                 <div class="category-card" onclick="openCategoryModal(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">
                     <div class="card-header">
                         <div class="cat-name">${cat.name}</div>
-                        <!-- Delete button moved to header to fix overlap -->
                         <button class="delete-btn" onclick="deleteCategory(event, ${cat.id})">Delete</button>
                     </div>
                     
@@ -341,6 +431,17 @@
                 </div>
                 `;
             }).join('');
+
+            // Update Controls
+            controls.style.display = 'flex';
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (currentPage === totalPages);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderCategories();
         }
 
         // --- Modal Logic ---
@@ -351,7 +452,6 @@
             
             document.getElementById('modalCategoryName').textContent = catName;
 
-            // Filter items for this category
             const relevantItems = allItems.filter(i => i.category === catId);
 
             if(relevantItems.length === 0) {
@@ -368,14 +468,13 @@
                         <td style="color:#64ffda; font-weight:bold">${formatMoney(item.amount)}</td>
                         <td style="color:#94a3b8; font-size:0.9rem">${formatDate(item.created_at)}</td>
                         <td>
-                            <button class="use-btn" id="btn-use-${item.id}" onclick="markAsUsed(this, '${item.name}', ${item.amount})">
+                            <button class="use-btn" id="btn-use-${item.id}" onclick="markAsUsed(this)">
                                 Use
                             </button>
                         </td>
                     </tr>
                 `).join('');
             }
-            
             modal.style.display = 'block';
         }
 
@@ -384,11 +483,10 @@
         }
 
         // --- Actions ---
-        function markAsUsed(btn, name, amount) {
-            // Visual feedback
+        function markAsUsed(btn) {
             btn.classList.add('used');
             btn.innerHTML = '&#10003; Used';
-            btn.onclick = null; // Disable further clicks
+            btn.onclick = null;
         }
 
         async function addCategory() {
@@ -408,7 +506,7 @@
 
                 if(res.ok) {
                     document.getElementById('categoryName').value = '';
-                    loadData(); // Reload to update list
+                    loadData(); 
                 } else {
                     alert("Failed to add category");
                 }
@@ -416,7 +514,7 @@
         }
 
         async function deleteCategory(event, id) {
-            event.stopPropagation(); // PREVENT MODAL FROM OPENING
+            event.stopPropagation();
             if(!confirm("Delete this category? Items inside it might become uncategorized.")) return;
 
             try {
@@ -438,18 +536,21 @@
 
         // --- Init ---
         document.addEventListener('DOMContentLoaded', () => {
-            const u = localStorage.getItem('user');
-            if(u) {
-                try { document.getElementById('userName').textContent = JSON.parse(u).username; } catch(e){}
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    const userName = user.username || 'User';
+                    
+                    document.getElementById('dropdownUserName').textContent = userName;
+                    document.getElementById('dropdownUserEmail').textContent = user.email || '';
+                    
+                    const initials = userName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                    document.getElementById('userInitials').textContent = initials;
+                } catch(e) {}
             }
             loadData();
         });
-
-        // Close modal on outside click
-        window.onclick = function(event) {
-            const modal = document.getElementById('categoryModal');
-            if (event.target == modal) closeModal();
-        }
     </script>
 </body>
 </html>
