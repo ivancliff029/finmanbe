@@ -25,18 +25,10 @@
             border-bottom: 1px solid rgba(100, 255, 218, 0.1);
         }
         .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;
         }
         .nav-logo {
-            color: #64ffda;
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex; align-items: center; gap: 0.5rem;
-            text-decoration: none;
+            color: #64ffda; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 0.5rem; text-decoration: none;
         }
         .nav-logo::before { content: "🛍️"; font-size: 1.4rem; }
         
@@ -113,6 +105,7 @@
         }
         .stat-label { color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #64ffda; margin-top: 0.5rem; }
+        .stat-sub { font-size: 0.85rem; color: #64748b; margin-top: 5px; }
 
         /* --- Add Item Form --- */
         .add-section {
@@ -172,8 +165,14 @@
             border: 1px solid rgba(100, 255, 218, 0.2); display: inline-block;
         }
         
-        .amount-cell { font-family: 'Courier New', monospace; font-weight: bold; color: #e0e0e0; }
-        .date-cell { color: #94a3b8; font-size: 0.85rem; }
+        /* New Styles for Balance Display */
+        .balance-container { display: flex; flex-direction: column; }
+        .current-bal { font-family: 'Courier New', monospace; font-weight: bold; color: #64ffda; }
+        .original-bal { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+        
+        /* Style for fully used items */
+        tr.fully-used td { opacity: 0.5; }
+        tr.fully-used .current-bal { color: #94a3b8; text-decoration: line-through; }
         
         .delete-btn {
             background: rgba(239, 68, 68, 0.15); color: #fca5a5;
@@ -246,7 +245,7 @@
     <div class="main-content">
         <div class="page-header">
             <h1>Item Tracker</h1>
-            <p>Manage your daily expenses and purchased items</p>
+            <p>Track your assets and their remaining balance.</p>
         </div>
 
         <div id="errorContainer"></div>
@@ -254,12 +253,14 @@
         <!-- Stats Summary -->
         <div class="stats-container" id="statsContainer" style="display:none;">
             <div class="stat-card">
-                <div class="stat-label">Total Item Value</div>
-                <div class="stat-value" id="totalValueDisplay">0 UGX</div>
+                <div class="stat-label">Available Assets</div>
+                <div class="stat-value" id="availableValueDisplay">0 UGX</div>
+                <div class="stat-sub">Funds currently available</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Items</div>
-                <div class="stat-value" id="totalCountDisplay">0</div>
+                <div class="stat-label">Total Deposited</div>
+                <div class="stat-value" id="totalDepositedDisplay">0 UGX</div>
+                <div class="stat-sub" id="totalCountDisplay">0 Items Recorded</div>
             </div>
         </div>
 
@@ -415,10 +416,25 @@
                     const data = await res.json();
                     storedItems = Array.isArray(data) ? data : (data.results || []);
 
-                    // Update Stats based on ALL items
-                    const totalVal = storedItems.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
-                    document.getElementById('totalValueDisplay').textContent = formatMoney(totalVal);
-                    document.getElementById('totalCountDisplay').textContent = storedItems.length;
+                    // --- Update Stats Logic ---
+                    
+                    // 1. Total Deposited (History)
+                    const totalDeposited = storedItems.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
+                    
+                    // 2. Available Assets (Current Balance)
+                    // We check if current_balance exists (from API). If not, we assume amount (backward compatibility),
+                    // UNLESS the item is old data that we know defaults to 0. 
+                    const totalAvailable = storedItems.reduce((sum, i) => {
+                         // Safely handle balance. If API returns it, use it. Else default to amount.
+                         let bal = (i.current_balance !== undefined && i.current_balance !== null) 
+                                   ? parseFloat(i.current_balance) 
+                                   : parseFloat(i.amount);
+                         return sum + bal;
+                    }, 0);
+
+                    document.getElementById('availableValueDisplay').textContent = formatMoney(totalAvailable);
+                    document.getElementById('totalDepositedDisplay').textContent = formatMoney(totalDeposited);
+                    document.getElementById('totalCountDisplay').textContent = `${storedItems.length} Items Recorded`;
                     document.getElementById('statsContainer').style.display = 'grid';
 
                     // Reset Pagination
@@ -461,7 +477,7 @@
                         <tr>
                             <th>Item Name</th>
                             <th>Category</th>
-                            <th>Amount</th>
+                            <th>Balance / Original</th>
                             <th>Date</th>
                             <th>Action</th>
                         </tr>
@@ -472,14 +488,28 @@
             html += itemsToShow.map(item => {
                 const catName = categoriesMap[item.category] || item.category_name || 'General';
                 
+                // Balance Logic
+                let balance = (item.current_balance !== undefined && item.current_balance !== null) 
+                              ? parseFloat(item.current_balance) 
+                              : parseFloat(item.amount);
+                const original = parseFloat(item.amount);
+                
+                // Check if fully used (strict check for 0)
+                const isFullyUsed = balance <= 0;
+
                 return `
-                <tr>
+                <tr class="${isFullyUsed ? 'fully-used' : ''}">
                     <td>
                         <div style="font-weight:600;">${item.name}</div>
                         <div style="font-size:0.8rem; color:#64748b;">${item.description || ''}</div>
                     </td>
                     <td><span class="category-badge">${catName}</span></td>
-                    <td class="amount-cell">${formatMoney(item.amount)}</td>
+                    <td>
+                        <div class="balance-container">
+                            <span class="current-bal">${formatMoney(balance)}</span>
+                            <span class="original-bal">of ${formatMoney(original)}</span>
+                        </div>
+                    </td>
                     <td class="date-cell">${formatDate(item.created_at)}</td>
                     <td>
                         <button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button>
@@ -535,7 +565,7 @@
                     document.getElementById('itemName').value = '';
                     document.getElementById('itemAmount').value = '';
                     document.getElementById('itemDescription').value = '';
-                    loadItems(); // Reloads data and resets page to 1
+                    loadItems(); // Reloads data
                 } else {
                     const err = await res.json();
                     showError("Failed to add: " + JSON.stringify(err));
