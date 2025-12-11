@@ -1,14 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
-from finances import views  # Import your views
+from finances import views 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    # API routes (prefixed with api/)
     path('api/', include('finances.urls')),  
     
-    # Frontend Pages
     path('', views.index, name='index'),      
     path('categories/', views.category_view, name="category"),
     path('budget/', views.budget_view, name="budget"),

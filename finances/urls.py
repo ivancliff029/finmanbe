@@ -4,7 +4,6 @@ from .views import CategoryViewSet, ItemViewSet, BudgetViewSet, register_user, l
 from . import views
 from rest_framework_simplejwt.views import TokenRefreshView
 
-# 1. Register only ViewSets here
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'items', ItemViewSet, basename='item')
@@ -12,13 +11,9 @@ router.register(r'budgets', BudgetViewSet, basename='budget')
 
 
 urlpatterns = [
-    # 2. Include the router URLs
     path('', include(router.urls)),
-
-    # 3. Authentication endpoints
     path('auth/register/', register_user, name='register'),
     path('auth/login/', login_user, name='login'),
     path('auth/profile/', get_user_profile, name='profile'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
 ]

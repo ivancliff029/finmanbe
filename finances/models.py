@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.contrib.auth.models import User
 
-
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -17,11 +16,6 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def total_amount(self):
-        # Fixed: use 'itemsItem' instead of 'items'
-        return sum(item.amount for item in self.itemsItem.all())
-
 class Item(models.Model):
     user = models.ForeignKey(
         User, 
@@ -34,12 +28,19 @@ class Item(models.Model):
     category = models.ForeignKey(
         Category, 
         on_delete=models.CASCADE, 
-        related_name='itemsItem'  # This is the related_name
+        related_name='itemsItem'  
     )
+    # The original deposit amount (History)
     amount = models.DecimalField(
         max_digits=15, 
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    # NEW: The remaining money in this specific deposit (Spendable)
+    current_balance = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        default=Decimal('0.00')
     )
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -48,8 +49,16 @@ class Item(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        # On creation, if balance is 0, assume it's a new deposit equal to amount
+        if not self.pk and self.current_balance == 0:
+            self.current_balance = self.amount
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.name} - {self.amount} UGX"
+        return f"{self.name} - {self.current_balance}/{self.amount} UGX"
+
+# ... (ToBuy and Budget models remain unchanged)
 class ToBuy(models.Model):
     user = models.ForeignKey(
         User, 

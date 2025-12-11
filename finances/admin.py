@@ -11,7 +11,6 @@ class CategoryAdmin(admin.ModelAdmin):
     get_total_amount.short_description = 'Total Amount'
     
     def get_items_count(self, obj):
-        # Fixed: use 'itemsItem' instead of 'items'
         return obj.itemsItem.count()
     get_items_count.short_description = 'Items Count'
 

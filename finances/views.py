@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
+from django.db import transaction # Import transaction for safe updates
+from decimal import Decimal
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
@@ -46,6 +48,7 @@ def budget_view(request):
 
 @login_required(login_url='/auth/login/')
 def item_view(request):
+    # Using 'items_added' related_name from your User model
     items = Item.objects.filter(user=request.user).order_by('-created_at')
     categories = Category.objects.all()
     context = {'items': items, 'categories': categories}
@@ -54,16 +57,14 @@ def item_view(request):
 @login_required(login_url='/auth/login/')
 def category_view(request):
     categories = Category.objects.all()
-    total_assets = Item.objects.filter(user=request.user).aggregate(total=Sum('amount'))['total'] or 0
+    # Calculate total current balance of assets
+    total_assets = Item.objects.filter(user=request.user).aggregate(total=Sum('current_balance'))['total'] or 0
     context = {'categories': categories, 'total_assets': total_assets}
     return render(request, 'category.html', context)
 
 @login_required(login_url='/auth/login/')
 @csrf_protect
 def to_buy_view(request):
-    """
-    Handles displaying the To-Buy list AND adding new items via HTML Form.
-    """
     if request.method == 'POST':
         name = request.POST.get('name')
         amount = request.POST.get('amount')
@@ -81,7 +82,6 @@ def to_buy_view(request):
             )
             return redirect('to-buy') 
 
-    # GET Request: Show the list
     items_to_buy = ToBuy.objects.filter(user=request.user).order_by('-created_at')
     categories = Category.objects.all() 
     
@@ -90,17 +90,12 @@ def to_buy_view(request):
         'categories': categories
     }
     return render(request, 'to_buy.html', context)
-# finances/views.py
 
 @login_required(login_url='/auth/login/')
 def delete_to_buy(request, pk):
-    """
-    Deletes a ToBuy item. 
-    Accepts POST for safety, or simple GET if you prefer quick links (though POST is safer).
-    """
     item = get_object_or_404(ToBuy, pk=pk, user=request.user)
     item.delete()
-    return redirect('to-buy') # Redirects back to the list
+    return redirect('to-buy')
 
 
 # ==========================================
@@ -118,8 +113,64 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def total_assets(self, request):
-        total = Item.objects.aggregate(total=Sum('amount'))['total'] or 0
+        total = Item.objects.aggregate(total=Sum('current_balance'))['total'] or 0
         return Response({'total_assets': total})
+
+    # --- NEW: WITHDRAW LOGIC (FIFO) ---
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def withdraw(self, request, pk=None):
+        category = self.get_object()
+        
+        try:
+            withdraw_amount = Decimal(str(request.data.get('amount', 0)))
+        except:
+            return Response({"error": "Invalid amount format"}, status=400)
+
+        if withdraw_amount <= 0:
+            return Response({"error": "Amount must be positive"}, status=400)
+
+        # 1. Calculate Total Available Funds in this Category
+        total_available = category.itemsItem.aggregate(sum=Sum('current_balance'))['sum'] or Decimal('0.00')
+
+        if withdraw_amount > total_available:
+            return Response({
+                "error": f"Insufficient funds. Available: {total_available}, Requested: {withdraw_amount}"
+            }, status=400)
+
+        # 2. FIFO Strategy: Get items with balance > 0, oldest first
+        items = category.itemsItem.filter(current_balance__gt=0).order_by('created_at')
+
+        remaining_to_withdraw = withdraw_amount
+        affected_items = []
+
+        # 3. Atomic Transaction
+        with transaction.atomic():
+            for item in items:
+                if remaining_to_withdraw <= 0:
+                    break
+
+                # Take from item: min(what's in item, what we need)
+                deduction = min(item.current_balance, remaining_to_withdraw)
+
+                item.current_balance -= deduction
+                item.save()
+
+                remaining_to_withdraw -= deduction
+                
+                affected_items.append({
+                    "item_id": item.id,
+                    "name": item.name,
+                    "deducted": deduction,
+                    "remaining_balance": item.current_balance
+                })
+
+        return Response({
+            "message": "Withdrawal successful",
+            "withdrawn_amount": withdraw_amount,
+            "new_category_balance": total_available - withdraw_amount,
+            "items_affected": affected_items
+        })
+
 
 class ItemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -129,7 +180,9 @@ class ItemViewSet(viewsets.ModelViewSet):
         return Item.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
+        # When creating an item, current_balance is handled by the model's save() method
         serializer.save(user=self.request.user)
+
 
 class BudgetViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
